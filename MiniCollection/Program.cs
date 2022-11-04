@@ -5,6 +5,10 @@
 }
 else
 {
+    if (!System.IO.Directory.Exists(FileHelpers.GetForcesDirectory()))
+    {
+        System.IO.Directory.CreateDirectory(FileHelpers.GetForcesDirectory());
+    }
     switch (args[0])
     {
         case "new":
@@ -13,10 +17,10 @@ else
             {
                 interactive = true;
             }
-            Operations.CollectionOperations.NewCollection("collection.json", "My Miniatures", interactive);
+            Operations.CollectionOperations.NewCollection(FileHelpers.GetCollectionFileName(), "My Miniatures", interactive);
             break;
         case "list":
-            Operations.CollectionOperations.PrintCollection("collection.json");
+            Operations.CollectionOperations.PrintCollection(FileHelpers.GetCollectionFileName());
             break;
         case "add":
             if (args.Length < 2)
@@ -26,12 +30,31 @@ else
             }
             if (String.Equals(args[1], "interactive"))
             {
-                Operations.CollectionOperations.AddMiniatures("collection.json");
+                Operations.CollectionOperations.AddMiniatures(FileHelpers.GetCollectionFileName());
             }
             else
             {
-                Operations.CollectionOperations.AddMiniature("collection.json", args[1]);
+                Operations.CollectionOperations.AddMiniature(FileHelpers.GetCollectionFileName(), args[1]);
             }
+            break;
+        case "newforce":
+            if (args.Length != 3)
+            {
+                Console.Error.WriteLine("Force name and faction required");
+                break;
+            }
+            Operations.ForceOperations.NewForce(FileHelpers.GetForceFileName(args[1]), args[1], args[2], true);
+            break;
+        case "listforce":
+            if (args.Length != 2)
+            {
+                Console.Error.WriteLine("Force name required");
+                break;
+            }
+            Operations.ForceOperations.PrintForce(FileHelpers.GetForceFileName(args[1]));
+            break;
+        case "forces":
+            Operations.ForceOperations.ListForces(FileHelpers.GetForcesDirectory());
             break;
         default:
             Console.Error.WriteLine($"Unrecognized command: {args[0]}");

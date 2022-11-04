@@ -28,7 +28,7 @@ namespace Operations
             Console.WriteLine(collection.Name);
             foreach (var entry in collection.Miniatures)
             {
-                Console.WriteLine($"{entry.Name} ... {entry.CountInCollection + entry.PendingCount}");
+                Console.WriteLine($"- {entry.Name} ... {entry.CountInCollection + entry.PendingCount}");
             }
         }
 
