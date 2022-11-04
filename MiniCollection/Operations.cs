@@ -1,11 +1,22 @@
+using System.Linq;
+
 namespace Operations
 {
     static class CollectionOperations
     {
-        public static void NewCollection(string file, string name)
+        public static void NewCollection(string file, string name, bool interactive)
         {
             var collection = new Data.Collection();
             collection.Name = name;
+
+            if (interactive)
+            {
+                var list = GetInteractiveList();
+                foreach (var entry in list)
+                {
+                    collection.Miniatures.Add(entry);
+                }
+            }
 
             SaveCollection(file, collection);
         }
@@ -58,6 +69,24 @@ namespace Operations
             SaveCollection(file, collection);
         }
 
+        public static void AddMiniatures(string file)
+        {
+            var collection = LoadCollection(file);
+            var list = GetInteractiveList();
+            foreach (var entry in list)
+            {
+                var match = collection.Miniatures.FirstOrDefault(x => String.Equals(entry.Name, x.Name));
+                if (match != null)
+                {
+                    match.CountInCollection += entry.CountInCollection;
+                }
+                else
+                {
+                    collection.Miniatures.Add(entry);
+                }
+            }
+            SaveCollection(file, collection);
+        }
         private static Data.Collection LoadCollection(string file)
         {
             using (var stream = new FileStream(file, FileMode.Open, FileAccess.Read))
@@ -80,6 +109,38 @@ namespace Operations
                 options.WriteIndented = true;
                 System.Text.Json.JsonSerializer.Serialize<Data.Collection>(stream, collection, options);
             }
+        }
+
+        private static List<Data.CollectionMiniature> GetInteractiveList()
+        {
+            var list = new List<Data.CollectionMiniature>();
+            while(true)
+            {
+                Console.Write("Miniature Name: ");
+                string? miniName = Console.ReadLine();
+                if (miniName == null || String.Equals(miniName, "done"))
+                {
+                    break;
+                }
+                Console.Write("Count: ");
+                string? count = Console.ReadLine();
+                if (count == null)
+                {
+                    break;
+                }
+                if (UInt32.TryParse(count, out uint parsedCount))
+                {
+                    var miniature = new Data.CollectionMiniature();
+                    miniature.Name = miniName;
+                    miniature.CountInCollection = parsedCount;
+                    list.Add(miniature);
+                }
+                else
+                {
+                    Console.Error.WriteLine("Unable to parse count!");
+                }
+            }
+            return list;
         }
     }
 }

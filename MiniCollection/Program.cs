@@ -8,7 +8,12 @@ else
     switch (args[0])
     {
         case "new":
-            Operations.CollectionOperations.NewCollection("collection.json", "My Miniatures");
+            bool interactive = false;
+            if (args.Length == 2 && String.Equals(args[1], "interactive"))
+            {
+                interactive = true;
+            }
+            Operations.CollectionOperations.NewCollection("collection.json", "My Miniatures", interactive);
             break;
         case "list":
             Operations.CollectionOperations.PrintCollection("collection.json");
@@ -19,7 +24,14 @@ else
                 Console.Error.WriteLine("Miniature name required");
                 break;
             }
-            Operations.CollectionOperations.AddMiniature("collection.json", args[1]);
+            if (String.Equals(args[1], "interactive"))
+            {
+                Operations.CollectionOperations.AddMiniatures("collection.json");
+            }
+            else
+            {
+                Operations.CollectionOperations.AddMiniature("collection.json", args[1]);
+            }
             break;
         default:
             Console.Error.WriteLine($"Unrecognized command: {args[0]}");
