@@ -117,13 +117,13 @@ namespace Operations
             while(true)
             {
                 Console.Write("Miniature Name: ");
-                string? miniName = Console.ReadLine();
+                string? miniName = Console.ReadLine()?.Trim();
                 if (miniName == null || String.Equals(miniName, "done"))
                 {
                     break;
                 }
                 Console.Write("Count: ");
-                string? count = Console.ReadLine();
+                string? count = Console.ReadLine()?.Trim();
                 if (count == null)
                 {
                     break;

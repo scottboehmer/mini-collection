@@ -93,13 +93,13 @@ namespace Operations
             while(true)
             {
                 Console.Write("Miniature Name: ");
-                string? miniName = Console.ReadLine();
+                string? miniName = Console.ReadLine()?.Trim();
                 if (miniName == null || String.Equals(miniName, "done"))
                 {
                     break;
                 }
                 Console.Write("Painted: ");
-                string? paintedString = Console.ReadLine();
+                string? paintedString = Console.ReadLine()?.Trim();
                 if (paintedString == null)
                 {
                     break;
