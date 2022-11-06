@@ -63,7 +63,7 @@ namespace Operations
             }
         }
 
-        private static Data.Force LoadForce(string file)
+        public static Data.Force LoadForce(string file)
         {
             using (var stream = new FileStream(file, FileMode.Open, FileAccess.Read))
             {

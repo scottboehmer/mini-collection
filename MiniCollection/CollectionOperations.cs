@@ -32,6 +32,54 @@ namespace Operations
             }
         }
 
+        public static void PrintUnpaintedCollection(string file, string forcesPath)
+        {
+            Data.Collection collection = LoadCollection(file);
+
+            var forceFiles = System.IO.Directory.EnumerateFiles(forcesPath, "*.json");
+            foreach (var forceFile in forceFiles)
+            {
+                try
+                {
+                    var force = ForceOperations.LoadForce(forceFile);
+                    
+                    foreach (var forceMini in force.Miniatures)
+                    {
+                        if (forceMini.Painted)
+                        {
+                            var match = collection.Miniatures.Find((x) => String.Equals(x.Name, forceMini.Name));
+                            if (match == null)
+                            {
+                                Console.Error.WriteLine($"No match for miniature name in collection: {forceMini.Name}");
+                            }
+                            else if (match.CountInCollection == 0)
+                            {
+                                Console.Error.WriteLine($"Not enough of miniature in collection: {forceMini.Name}");
+                            }
+                            else
+                            {
+                                match.CountInCollection--;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.Error.WriteLine($"Unable to parse force in {System.IO.Path.GetFileName(file)}");
+                }
+            }
+
+            Console.WriteLine(collection.Name);
+            foreach (var entry in collection.Miniatures)
+            {
+                var count = entry.CountInCollection + entry.PendingCount;
+                if (count > 0)
+                {
+                    Console.WriteLine($"- {entry.Name} ... {entry.CountInCollection + entry.PendingCount}");
+                }
+            }
+        }
+
         public static void AddMiniature(string file, string miniature, bool removeFromPending = false)
         {
             bool added = false;

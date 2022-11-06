@@ -20,7 +20,14 @@ else
             Operations.CollectionOperations.NewCollection(FileHelpers.GetCollectionFileName(), "My Miniatures", interactive);
             break;
         case "list":
-            Operations.CollectionOperations.PrintCollection(FileHelpers.GetCollectionFileName());
+            if (args.Length == 1)
+            {
+                Operations.CollectionOperations.PrintCollection(FileHelpers.GetCollectionFileName());
+            }
+            else if (args.Length == 2 && String.Equals(args[1], "unpainted"))
+            {
+                Operations.CollectionOperations.PrintUnpaintedCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory());
+            }
             break;
         case "add":
             if (args.Length < 2)
