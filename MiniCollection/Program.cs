@@ -26,7 +26,11 @@ else
             }
             else if (args.Length == 2 && String.Equals(args[1], "unpainted"))
             {
-                Operations.CollectionOperations.PrintUnpaintedCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory());
+                Operations.CollectionOperations.PrintFilteredCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), false);
+            }
+            else if (args.Length == 2 && String.Equals(args[1], "unallocated"))
+            {
+                Operations.CollectionOperations.PrintFilteredCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), true);
             }
             break;
         case "add":

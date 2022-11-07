@@ -14,7 +14,16 @@ namespace Operations
                 var list = GetInteractiveList();
                 foreach (var entry in list)
                 {
-                    collection.Miniatures.Add(entry);
+                    var match = collection.Miniatures.Find((x) => String.Equals(x.Name, entry.Name));
+                    if (match == null)
+                    {
+                        collection.Miniatures.Add(entry);
+                    }
+                    else
+                    {
+                        match.CountInCollection += entry.CountInCollection;
+                        match.PendingCount += entry.PendingCount;
+                    }
                 }
             }
 
@@ -32,7 +41,7 @@ namespace Operations
             }
         }
 
-        public static void PrintUnpaintedCollection(string file, string forcesPath)
+        public static void PrintFilteredCollection(string file, string forcesPath, bool onlyUnallocated)
         {
             Data.Collection collection = LoadCollection(file);
 
@@ -45,7 +54,7 @@ namespace Operations
                     
                     foreach (var forceMini in force.Miniatures)
                     {
-                        if (forceMini.Painted)
+                        if (onlyUnallocated || forceMini.Painted)
                         {
                             var match = collection.Miniatures.Find((x) => String.Equals(x.Name, forceMini.Name));
                             if (match == null)
