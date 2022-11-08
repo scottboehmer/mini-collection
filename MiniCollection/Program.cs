@@ -26,12 +26,20 @@ else
             }
             else if (args.Length == 2 && String.Equals(args[1], "unpainted"))
             {
-                Operations.CollectionOperations.PrintFilteredCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), false);
+                Operations.CollectionOperations.PrintFilteredCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), (x) => !x.Painted);
             }
             else if (args.Length == 2 && String.Equals(args[1], "unallocated"))
             {
-                Operations.CollectionOperations.PrintFilteredCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), true);
+                Operations.CollectionOperations.PrintFilteredCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), (x) => false);
             }
+            /*else if (args.Length == 2 && String.Equals(args[1], "painted"))
+            {
+                Operations.CollectionOperations.PrintFilteredCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), (x) => x.Painted);
+            }
+            else if (args.Length == 2 && String.Equals(args[1], "allocated"))
+            {
+                Operations.CollectionOperations.PrintFilteredCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), (x) => true);
+            }*/
             break;
         case "add":
             if (args.Length < 2)
@@ -66,6 +74,9 @@ else
             break;
         case "forces":
             Operations.ForceOperations.ListForces(FileHelpers.GetForcesDirectory());
+            break;
+        case "count":
+            Operations.CollectionOperations.CountCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory());
             break;
         default:
             Console.Error.WriteLine($"Unrecognized command: {args[0]}");

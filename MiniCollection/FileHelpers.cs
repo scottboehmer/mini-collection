@@ -2,12 +2,14 @@ static class FileHelpers
 {
     public static string GetCollectionFileName()
     {
-        return "collection.json";
+        var settings = SettingsManager.GetSettings();
+        return Path.Combine(settings.Path, "collection.json");
     }
 
     public static string GetForcesDirectory()
     {
-        return "forces";
+        var settings = SettingsManager.GetSettings();
+        return Path.Combine(settings.Path, "forces");
     }
 
     public static string GetForceFileName(string forceName)

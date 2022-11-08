@@ -41,7 +41,52 @@ namespace Operations
             }
         }
 
-        public static void PrintFilteredCollection(string file, string forcesPath, bool onlyUnallocated)
+        public static void CountCollection(string file, string forcesPath)
+        {
+            Data.Collection collection = LoadCollection(file);
+            uint count = 0;
+            uint pending = 0;
+            uint painted = 0;
+            uint allocated = 0;
+
+            foreach (var entry in collection.Miniatures)
+            {
+                count += entry.CountInCollection;
+                pending += entry.PendingCount;
+            }
+
+            var forceFiles = System.IO.Directory.EnumerateFiles(forcesPath, "*.json");
+            foreach (var forceFile in forceFiles)
+            {
+                try
+                {
+                    var force = ForceOperations.LoadForce(forceFile);
+                    
+                    foreach (var forceMini in force.Miniatures)
+                    {
+                        if (forceMini.Painted)
+                        {
+                            painted++;
+                        }
+                        allocated++;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.Error.WriteLine($"Unable to parse force in {System.IO.Path.GetFileName(file)}");
+                }
+            }
+
+            Console.WriteLine(collection.Name);
+            Console.WriteLine($"- In Collection: {count}");
+            Console.WriteLine($"- Allocated to a Force: {allocated}");
+            Console.WriteLine($"- Painted: {painted}");
+            Console.WriteLine($"- Pending Purchases: {pending}");
+        }
+
+        public delegate bool ForceMiniatureFilter(Data.ForceMiniature mini);
+
+        public static void PrintFilteredCollection(string file, string forcesPath, ForceMiniatureFilter filter)
         {
             Data.Collection collection = LoadCollection(file);
 
@@ -54,7 +99,7 @@ namespace Operations
                     
                     foreach (var forceMini in force.Miniatures)
                     {
-                        if (onlyUnallocated || forceMini.Painted)
+                        if (!filter(forceMini))
                         {
                             var match = collection.Miniatures.Find((x) => String.Equals(x.Name, forceMini.Name));
                             if (match == null)
@@ -144,7 +189,8 @@ namespace Operations
             }
             SaveCollection(file, collection);
         }
-        private static Data.Collection LoadCollection(string file)
+
+        public static Data.Collection LoadCollection(string file)
         {
             using (var stream = new FileStream(file, FileMode.Open, FileAccess.Read))
             {

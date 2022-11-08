@@ -26,7 +26,7 @@ namespace Operations
         {
             Data.Force force = LoadForce(file);
 
-            Console.WriteLine($"{force.Faction} / {force.Name}");
+            Console.WriteLine($"{force.Faction} > {force.Name}");
             foreach (var entry in force.Miniatures)
             {
                 if (entry.Painted)
@@ -49,7 +49,7 @@ namespace Operations
                 try
                 {
                     var force = LoadForce(file);
-                    forces.Add($"{force.Faction} / {force.Name}: {force.Miniatures.Count()}");
+                    forces.Add($"{force.Faction} > {force.Name}: {force.Miniatures.Count((x) => x.Painted)}/{force.Miniatures.Count()}");
                 }
                 catch (Exception)
                 {
