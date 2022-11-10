@@ -9,6 +9,10 @@ else
     {
         System.IO.Directory.CreateDirectory(FileHelpers.GetForcesDirectory());
     }
+    if (!System.IO.Directory.Exists(FileHelpers.GetRenderDirectory()))
+    {
+        System.IO.Directory.CreateDirectory(FileHelpers.GetRenderDirectory());
+    }
     switch (args[0])
     {
         case "new":
@@ -77,6 +81,10 @@ else
             break;
         case "count":
             Operations.CollectionOperations.CountCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory());
+            break;
+        case "render":
+            Operations.RenderOperations.RenderCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), FileHelpers.GetRenderDirectory());
+            Operations.RenderOperations.RenderForces(FileHelpers.GetForcesDirectory(), FileHelpers.GetRenderDirectory());
             break;
         default:
             Console.Error.WriteLine($"Unrecognized command: {args[0]}");

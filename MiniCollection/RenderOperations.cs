@@ -1,0 +1,131 @@
+using System.Linq;
+
+namespace Operations
+{
+    static class RenderOperations
+    {
+        public static void RenderForce(string forceFile, string outputFile)
+        {
+            var force = ForceOperations.LoadForce(forceFile);
+
+            using (var writer = new StreamWriter(outputFile))
+            {
+                writer.WriteLine($"# {force.Name}");
+                writer.WriteLine($"**Faction:** {force.Faction}");
+                if (force.Miniatures.FirstOrDefault((x) => x.Painted) != null)
+                {
+                    writer.WriteLine("## Current Force");
+                    foreach (var mini in force.Miniatures)
+                    {
+                        if (mini.Painted)
+                        {
+                            writer.WriteLine($"- {mini.Name}");
+                        }
+                    }
+                }
+                if (force.Miniatures.FirstOrDefault((x) => !x.Painted) != null)
+                {
+                    writer.WriteLine("## Planned Expansion");
+                    foreach (var mini in force.Miniatures)
+                    {
+                        if (!mini.Painted)
+                        {
+                            writer.WriteLine($"- {mini.Name}");
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void RenderForces(string forcePath, string outputPath)
+        {
+            var files = System.IO.Directory.EnumerateFiles(forcePath, "*.json");
+            foreach (var file in files)
+            {
+                try
+                {
+                    var outputFile = Path.Join(outputPath, $"{System.IO.Path.GetFileNameWithoutExtension(file)}.md");
+                    RenderForce(file, outputFile);
+                }
+                catch (Exception)
+                {
+                    Console.Error.WriteLine($"Unable to parse force in {System.IO.Path.GetFileName(file)}");
+                }
+            }
+        }
+
+        public static void RenderCollection(string collectionFile, string forcePath, string outputPath)
+        {
+            var paintedCounts = new Dictionary<string, uint>();
+            var allocatedCounts = new Dictionary<string, uint>();
+
+            var collection = CollectionOperations.LoadCollection(collectionFile);
+            var outputFile = Path.Join(outputPath, "collection.md");
+
+            var files = System.IO.Directory.EnumerateFiles(forcePath, "*.json");
+            foreach (var file in files)
+            {
+                try
+                {
+                    var force = ForceOperations.LoadForce(file);
+                    foreach (var mini in force.Miniatures)
+                    {
+                        if (allocatedCounts.ContainsKey(mini.Name))
+                        {
+                            allocatedCounts[mini.Name]++;
+                        }
+                        else
+                        {
+                            allocatedCounts[mini.Name] = 1;
+                        }
+                        if (mini.Painted)
+                        {
+                            if (paintedCounts.ContainsKey(mini.Name))
+                            {
+                                paintedCounts[mini.Name]++;
+                            }
+                            else
+                            {
+                                paintedCounts[mini.Name] = 1;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.Error.WriteLine($"Unable to parse force in {System.IO.Path.GetFileName(file)}");
+                }
+            }
+
+            using (var writer = new StreamWriter(outputFile))
+            {
+                uint totalInCollection = 0;
+                uint totalPending = 0;
+                uint totalAllocated = 0;
+                uint totalPainted = 0;
+
+                writer.WriteLine($"# {collection.Name}");
+                writer.WriteLine();
+                writer.WriteLine("| Miniature | In Collection | Pending Order | Allocated | Painted |");
+                writer.WriteLine("| :--- | ---: | ---: | ---: | ---: |");
+    
+                foreach (var mini in collection.Miniatures)
+                {
+                    var painted = paintedCounts.ContainsKey(mini.Name) ? paintedCounts[mini.Name] : 0;
+                    var allocated = allocatedCounts.ContainsKey(mini.Name) ? allocatedCounts[mini.Name] : 0;
+
+                    totalInCollection += mini.CountInCollection;
+                    totalPending += mini.PendingCount;
+                    totalAllocated += allocated;
+                    totalPainted += painted;
+                    
+                    writer.WriteLine($"| {mini.Name} | {mini.CountInCollection} | {mini.PendingCount} | {allocated} | { painted} |");
+                }
+
+                writer.WriteLine($"| TOTAL | {totalInCollection} | {totalPending} | {totalAllocated} | {totalPainted} |");
+
+                writer.WriteLine();
+            }
+        }
+    }
+}

@@ -12,6 +12,12 @@ static class FileHelpers
         return Path.Combine(settings.Path, "forces");
     }
 
+    public static string GetRenderDirectory()
+    {
+        var settings = SettingsManager.GetSettings();
+        return Path.Combine(settings.Path, "md");
+    }
+
     public static string GetForceFileName(string forceName)
     {
         var filename = forceName.ToLower().Replace(' ','-').Replace("'", "");
