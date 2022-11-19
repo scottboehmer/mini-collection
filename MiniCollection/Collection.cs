@@ -22,5 +22,6 @@ namespace Data
         public string Name { get; set; }
         public uint CountInCollection { get; set; }
         public uint PendingCount { get; set; }
+        public uint WishlistCount { get; set; }
     }
 }

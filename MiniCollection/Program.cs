@@ -60,6 +60,30 @@ else
                 Operations.CollectionOperations.AddMiniature(FileHelpers.GetCollectionFileName(), args[1]);
             }
             break;
+        case "wish":
+            if (args.Length < 2)
+            {
+                Console.Error.WriteLine("Miniature name required");
+                break;
+            }
+            Operations.CollectionOperations.AddWishlistMiniature(FileHelpers.GetCollectionFileName(), args[1]);
+            break;
+        case "order":
+            if (args.Length < 2)
+            {
+                Console.Error.WriteLine("Miniature name required");
+                break;
+            }
+            Operations.CollectionOperations.AddPendingMiniature(FileHelpers.GetCollectionFileName(), args[1]);
+            break;
+        case "receive":
+            if (args.Length < 2)
+            {
+                Console.Error.WriteLine("Miniature name required");
+                break;
+            }
+            Operations.CollectionOperations.AddMiniature(FileHelpers.GetCollectionFileName(), args[1], true);
+            break;
         case "newforce":
             if (args.Length != 3)
             {

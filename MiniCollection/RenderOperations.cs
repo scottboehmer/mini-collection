@@ -101,13 +101,14 @@ namespace Operations
             {
                 uint totalInCollection = 0;
                 uint totalPending = 0;
+                uint totalWishlist = 0;
                 uint totalAllocated = 0;
                 uint totalPainted = 0;
 
                 writer.WriteLine($"# {collection.Name}");
                 writer.WriteLine();
-                writer.WriteLine("| Miniature | In Collection | Pending Order | Allocated | Painted |");
-                writer.WriteLine("| :--- | ---: | ---: | ---: | ---: |");
+                writer.WriteLine("| Miniature | In Collection | Pending Order | Wishlist | Allocated | Painted |");
+                writer.WriteLine("| :--- | ---: | ---: | ---: | ---: | ---: |");
     
                 foreach (var mini in collection.Miniatures)
                 {
@@ -116,13 +117,14 @@ namespace Operations
 
                     totalInCollection += mini.CountInCollection;
                     totalPending += mini.PendingCount;
+                    totalWishlist += mini.WishlistCount;
                     totalAllocated += allocated;
                     totalPainted += painted;
                     
-                    writer.WriteLine($"| {mini.Name} | {mini.CountInCollection} | {mini.PendingCount} | {allocated} | { painted} |");
+                    writer.WriteLine($"| {mini.Name} | {mini.CountInCollection} | {mini.PendingCount} | {mini.WishlistCount} | {allocated} | { painted} |");
                 }
 
-                writer.WriteLine($"| TOTAL | {totalInCollection} | {totalPending} | {totalAllocated} | {totalPainted} |");
+                writer.WriteLine($"| TOTAL | {totalInCollection} | {totalPending} | {totalWishlist} | {totalAllocated} | {totalPainted} |");
 
                 writer.WriteLine();
             }

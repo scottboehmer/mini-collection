@@ -134,6 +134,56 @@ namespace Operations
             }
         }
 
+        public static void AddPendingMiniature(string file, string miniature)
+        {
+            bool added = false;
+            Data.Collection collection = LoadCollection(file);
+            foreach (var entry in collection.Miniatures)
+            {
+                if (String.Equals(entry.Name, miniature))
+                {
+                    if (entry.WishlistCount > 0)
+                    {
+                        entry.WishlistCount--;
+                    }
+                    entry.PendingCount++;
+                    added = true;
+                }
+            }
+            if (!added)
+            {
+                var mini = new Data.CollectionMiniature();
+                mini.Name = miniature;
+                mini.PendingCount = 1;
+                collection.Miniatures.Add(mini);
+                added = true;
+            }
+            SaveCollection(file, collection);
+        }
+
+        public static void AddWishlistMiniature(string file, string miniature)
+        {
+            bool added = false;
+            Data.Collection collection = LoadCollection(file);
+            foreach (var entry in collection.Miniatures)
+            {
+                if (String.Equals(entry.Name, miniature))
+                {
+                    entry.WishlistCount++;
+                    added = true;
+                }
+            }
+            if (!added)
+            {
+                var mini = new Data.CollectionMiniature();
+                mini.Name = miniature;
+                mini.WishlistCount = 1;
+                collection.Miniatures.Add(mini);
+                added = true;
+            }
+            SaveCollection(file, collection);
+        }
+
         public static void AddMiniature(string file, string miniature, bool removeFromPending = false)
         {
             bool added = false;
