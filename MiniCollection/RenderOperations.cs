@@ -129,5 +129,91 @@ namespace Operations
                 writer.WriteLine();
             }
         }
+
+        public static void RenderReadyToPaint(string collectionFile, string forcePath, string outputPath)
+        {
+            var paintedCounts = new Dictionary<string, uint>();
+            var allocatedCounts = new Dictionary<string, uint>();
+
+            var collection = CollectionOperations.LoadCollection(collectionFile);
+            var outputFile = Path.Join(outputPath, "ready-to-paint.md");
+
+            var files = System.IO.Directory.EnumerateFiles(forcePath, "*.json");
+            foreach (var file in files)
+            {
+                try
+                {
+                    var force = ForceOperations.LoadForce(file);
+                    foreach (var mini in force.Miniatures)
+                    {
+                        if (allocatedCounts.ContainsKey(mini.Name))
+                        {
+                            allocatedCounts[mini.Name]++;
+                        }
+                        else
+                        {
+                            allocatedCounts[mini.Name] = 1;
+                        }
+                        if (mini.Painted)
+                        {
+                            if (paintedCounts.ContainsKey(mini.Name))
+                            {
+                                paintedCounts[mini.Name]++;
+                            }
+                            else
+                            {
+                                paintedCounts[mini.Name] = 1;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.Error.WriteLine($"Unable to parse force in {System.IO.Path.GetFileName(file)}");
+                }
+            }
+
+            using (var writer = new StreamWriter(outputFile))
+            {
+                uint totalReady = 0;
+
+                writer.WriteLine($"# {collection.Name}");
+                writer.WriteLine();
+                writer.WriteLine("| Miniature | Ready to Paint |");
+                writer.WriteLine("| :--- | ---: |");
+    
+                foreach (var mini in collection.Miniatures)
+                {
+                    var painted = paintedCounts.ContainsKey(mini.Name) ? paintedCounts[mini.Name] : 0;
+                    var allocated = allocatedCounts.ContainsKey(mini.Name) ? allocatedCounts[mini.Name] : 0;
+
+                    uint unpaintedInCollection = 0;
+                    uint unpaintedInForces = 0;
+
+                    if (mini.CountInCollection > allocated)
+                    {
+                        unpaintedInCollection = mini.CountInCollection - allocated;
+                    }
+
+                    if (allocated > painted)
+                    {
+                        unpaintedInForces = allocated - painted;
+                    }
+
+                    uint readyToPaint = unpaintedInCollection > unpaintedInForces ? unpaintedInForces : unpaintedInCollection;
+
+                    totalReady += readyToPaint;
+
+                    if (readyToPaint > 0)
+                    {
+                        writer.WriteLine($"| {mini.Name} | {readyToPaint} |");
+                    }
+                }
+
+                writer.WriteLine($"| TOTAL | {totalReady} |");
+
+                writer.WriteLine();
+            }
+        }
     }
 }
