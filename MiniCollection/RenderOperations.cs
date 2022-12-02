@@ -221,7 +221,7 @@ namespace Operations
                     }
                 }
 
-                writer.WriteLine($"| TOTAL | {totalReady} |");
+                writer.WriteLine($"| TOTAL | {totalReady} | |");
 
                 writer.WriteLine();
             }
