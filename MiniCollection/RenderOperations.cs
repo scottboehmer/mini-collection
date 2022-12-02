@@ -134,6 +134,8 @@ namespace Operations
         {
             var paintedCounts = new Dictionary<string, uint>();
             var allocatedCounts = new Dictionary<string, uint>();
+            var unpaintedSchemes = new Dictionary<string, List<string> >();
+
 
             var collection = CollectionOperations.LoadCollection(collectionFile);
             var outputFile = Path.Join(outputPath, "ready-to-paint.md");
@@ -165,6 +167,15 @@ namespace Operations
                                 paintedCounts[mini.Name] = 1;
                             }
                         }
+                        else
+                        {
+                            if (!unpaintedSchemes.ContainsKey(mini.Name))
+                            {
+                                unpaintedSchemes[mini.Name] = new List<string>();
+                            }
+
+                            unpaintedSchemes[mini.Name].Add(force.Name);
+                        }
                     }
                 }
                 catch (Exception)
@@ -179,8 +190,8 @@ namespace Operations
 
                 writer.WriteLine($"# {collection.Name}");
                 writer.WriteLine();
-                writer.WriteLine("| Miniature | Ready to Paint |");
-                writer.WriteLine("| :--- | ---: |");
+                writer.WriteLine("| Miniature | Ready to Paint | Forces |");
+                writer.WriteLine("| :--- | ---: | :--- |");
     
                 foreach (var mini in collection.Miniatures)
                 {
@@ -190,9 +201,9 @@ namespace Operations
                     uint unpaintedInCollection = 0;
                     uint unpaintedInForces = 0;
 
-                    if (mini.CountInCollection > allocated)
+                    if (mini.CountInCollection > painted)
                     {
-                        unpaintedInCollection = mini.CountInCollection - allocated;
+                        unpaintedInCollection = mini.CountInCollection - painted;
                     }
 
                     if (allocated > painted)
@@ -206,7 +217,7 @@ namespace Operations
 
                     if (readyToPaint > 0)
                     {
-                        writer.WriteLine($"| {mini.Name} | {readyToPaint} |");
+                        writer.WriteLine($"| {mini.Name} | {readyToPaint} | {String.Join(", ", unpaintedSchemes[mini.Name])} |");
                     }
                 }
 
