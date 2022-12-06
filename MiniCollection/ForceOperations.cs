@@ -22,6 +22,19 @@ namespace Operations
             SaveForce(file, force);
         }
 
+        public static void AddToForce(string file, string mech)
+        {
+            var force = LoadForce(file);
+
+            var mini = new Data.ForceMiniature();
+            mini.Name = mech;
+            mini.Painted = false;
+
+            force.Miniatures.Add(mini);
+
+            SaveForce(file, force);
+        }
+
         public static void PrintForce(string file)
         {
             Data.Force force = LoadForce(file);

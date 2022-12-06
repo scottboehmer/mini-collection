@@ -84,7 +84,7 @@ else
             }
             Operations.CollectionOperations.AddMiniature(FileHelpers.GetCollectionFileName(), args[1], true);
             break;
-        case "newforce":
+        case "muster":
             if (args.Length != 3)
             {
                 Console.Error.WriteLine("Force name and faction required");
@@ -99,6 +99,14 @@ else
                 break;
             }
             Operations.ForceOperations.PrintForce(FileHelpers.GetForceFileName(args[1]));
+            break;
+        case "enlist":
+            if (args.Length != 3)
+            {
+                Console.Error.WriteLine("Force name and miniature name required");
+                break;
+            }
+            Operations.ForceOperations.AddToForce(FileHelpers.GetForceFileName(args[1]), args[2]);
             break;
         case "forces":
             Operations.ForceOperations.ListForces(FileHelpers.GetForcesDirectory());
