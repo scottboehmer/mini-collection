@@ -108,6 +108,14 @@ else
             }
             Operations.ForceOperations.AddToForce(FileHelpers.GetForceFileName(args[1]), args[2]);
             break;
+        case "paint":
+            if (args.Length != 3)
+            {
+                Console.Error.WriteLine("Force name and miniature name required");
+                break;
+            }
+            Operations.ForceOperations.MarkUnitAsPainted(FileHelpers.GetForceFileName(args[1]), args[2]);
+            break;
         case "forces":
             Operations.ForceOperations.ListForces(FileHelpers.GetForcesDirectory());
             break;

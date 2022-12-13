@@ -35,6 +35,30 @@ namespace Operations
             SaveForce(file, force);
         }
 
+        public static void MarkUnitAsPainted(string file, string mech)
+        {
+            var force = LoadForce(file);
+
+            bool found = false;
+            foreach (var mini in force.Miniatures)
+            {
+                if (String.Equals(mech, mini.Name) && !mini.Painted)
+                {
+                    mini.Painted = true;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                Console.Error.WriteLine($"Unable to locate an unpainted miniature named {mech}");
+                return;
+            }
+            
+            SaveForce(file, force);
+        }
+
         public static void PrintForce(string file)
         {
             Data.Force force = LoadForce(file);
