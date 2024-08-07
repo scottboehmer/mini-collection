@@ -226,5 +226,70 @@ namespace Operations
                 writer.WriteLine();
             }
         }
+
+        public static void RenderUnallocated(string collectionFile, string forcePath, string outputPath)
+        {
+            var allocatedCounts = new Dictionary<string, uint>();
+
+            var collection = CollectionOperations.LoadCollection(collectionFile);
+            var outputFile = Path.Join(outputPath, "unallocated.md");
+
+            var files = System.IO.Directory.EnumerateFiles(forcePath, "*.json");
+            foreach (var file in files)
+            {
+                try
+                {
+                    var force = ForceOperations.LoadForce(file);
+                    foreach (var mini in force.Miniatures)
+                    {
+                        if (allocatedCounts.ContainsKey(mini.Name))
+                        {
+                            allocatedCounts[mini.Name]++;
+                        }
+                        else
+                        {
+                            allocatedCounts[mini.Name] = 1;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.Error.WriteLine($"Unable to parse force in {System.IO.Path.GetFileName(file)}");
+                }
+            }
+
+            using (var writer = new StreamWriter(outputFile))
+            {
+                uint totalUnallocated = 0;
+
+                writer.WriteLine($"# {collection.Name}");
+                writer.WriteLine();
+                writer.WriteLine("| Miniature | Unallocated |");
+                writer.WriteLine("| :--- | ---: |");
+    
+                foreach (var mini in collection.Miniatures)
+                {
+                    var allocated = allocatedCounts.ContainsKey(mini.Name) ? allocatedCounts[mini.Name] : 0;
+
+                    uint unallocatedCount = 0;
+
+                    if (mini.CountInCollection > allocated)
+                    {
+                        unallocatedCount = mini.CountInCollection - allocated;
+                    }
+
+                    totalUnallocated += unallocatedCount;
+
+                    if (unallocatedCount > 0)
+                    {
+                        writer.WriteLine($"| {mini.Name} | {unallocatedCount} |");
+                    }
+                }
+
+                writer.WriteLine($"| TOTAL | {totalUnallocated} |");
+
+                writer.WriteLine();
+            }
+        }
     }
 }
