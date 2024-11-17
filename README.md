@@ -32,6 +32,12 @@ dotnet run -- add-force --force "Ryuken-roku" --faction "Kurita"
 dotnet run -- add-mini-to-force --mini "Awesome AWS-8Q" --force "Ryuken-roku"
 ```
 
+### Mark a Miniature as Painted
+
+```
+dotnet run -- paint-mini --mini "Awesome AWS-8Q" --force "Ryuken-roku"
+```
+
 ### Generate Markdown Files
 
 ```

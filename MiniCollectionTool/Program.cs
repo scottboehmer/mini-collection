@@ -1,5 +1,4 @@
 ﻿using System.CommandLine;
-using System.Net;
 
 namespace MiniCollectionTool;
 
@@ -33,14 +32,15 @@ class Program
             miniOption,
             interactiveOption
         };
-        addCommand.SetHandler((i, m) => {AddMiniature(i, m);}, interactiveOption, miniOption);
+        addCommand.SetHandler((interactive, mini) => {AddMiniature(interactive, mini);}, interactiveOption, miniOption);
 
         var addForceCommand = new Command("add-force", "Add a force to the collection")
         {
             forceOption,
-            factionOption
+            factionOption,
+            interactiveOption
         };
-        addForceCommand.SetHandler((force, faction) => {AddForce(force, faction);}, forceOption, factionOption);
+        addForceCommand.SetHandler((interactive, force, faction) => {AddForce(interactive, force, faction);}, interactiveOption, forceOption, factionOption);
 
         var addMiniToForceCommand = new Command("add-mini-to-force", "Add a mini to a force")
         {
@@ -48,6 +48,13 @@ class Program
             miniOption
         };
         addMiniToForceCommand.SetHandler((force,mini) => {AddMiniToForce(force, mini);}, forceOption, miniOption);
+
+        var paintMiniCommand = new Command("paint-mini", "Mark a miniature as painted")
+        {
+            forceOption,
+            miniOption
+        };
+        paintMiniCommand.SetHandler((force,mini) => {PaintMini(force, mini);}, forceOption, miniOption);
 
         var renderCommand = new Command("render", "Generate markdown files for the collection");
         renderCommand.SetHandler(() => {Render(); });
@@ -57,6 +64,7 @@ class Program
         rootCommand.AddCommand(addCommand);
         rootCommand.AddCommand(addForceCommand);
         rootCommand.AddCommand(addMiniToForceCommand);
+        rootCommand.AddCommand(paintMiniCommand);
         return rootCommand.Invoke(args);
     }
 
@@ -80,7 +88,7 @@ class Program
         return 0;
     }
 
-    static int AddForce(string? force, string? faction)
+    static int AddForce(bool interactive, string? force, string? faction)
     {
         if (String.IsNullOrEmpty(force))
         {
@@ -93,7 +101,7 @@ class Program
             return 1;
         }
         var fileName = FileHelpers.GetForceFileName(force);
-        ForceOperations.NewForce(fileName, force, faction, true);
+        ForceOperations.NewForce(fileName, force, faction, interactive);
         return 0;
     }
 
@@ -111,6 +119,23 @@ class Program
         }
         var fileName = FileHelpers.GetForceFileName(force);
         ForceOperations.AddToForce(fileName, mini);
+        return 0;
+    }
+
+    static int PaintMini(string? force, string? mini)
+    {
+        if (String.IsNullOrEmpty(force))
+        {
+            Console.Error.WriteLine("Force name required");
+            return 1;
+        }
+        if (String.IsNullOrEmpty(mini))
+        {
+            Console.Error.WriteLine("Miniature name required");
+            return 1;
+        }
+        var fileName = FileHelpers.GetForceFileName(force);
+        ForceOperations.MarkUnitAsPainted(fileName, mini);
         return 0;
     }
 
