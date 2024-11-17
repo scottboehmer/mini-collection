@@ -1,3 +1,7 @@
+using MiniCollectionTool.Data;
+
+namespace MiniCollectionTool;
+
 class SettingsManager
 {
     private SettingsManager()

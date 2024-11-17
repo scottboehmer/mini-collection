@@ -1,3 +1,5 @@
+namespace MiniCollectionTool;
+
 static class FileHelpers
 {
     public static string GetCollectionFileName()
@@ -21,6 +23,6 @@ static class FileHelpers
     public static string GetForceFileName(string forceName)
     {
         var filename = forceName.ToLower().Replace(' ','-').Replace("'", "");
-        return $"{GetForcesDirectory()}/{filename}.json";
+        return Path.Combine(GetForcesDirectory(), $"{filename}.json");
     }
 }

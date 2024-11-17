@@ -1,3 +1,5 @@
+namespace MiniCollectionTool.Data;
+
 class Settings
 {
     public Settings()
