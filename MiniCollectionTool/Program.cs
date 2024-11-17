@@ -49,7 +49,6 @@ class Program
         };
         addMiniToForceCommand.SetHandler((force,mini) => {AddMiniToForce(force, mini);}, forceOption, miniOption);
 
-
         var renderCommand = new Command("render", "Generate markdown files for the collection");
         renderCommand.SetHandler(() => {Render(); });
 
@@ -63,6 +62,8 @@ class Program
 
     static int AddMiniature(bool interactive, string? miniature)
     {
+        EnsureCollection();
+
         if (interactive)
         {
             CollectionOperations.AddMiniatures(FileHelpers.GetCollectionFileName());
@@ -115,10 +116,21 @@ class Program
 
     static int Render()
     {
+        EnsureCollection();
+
         RenderOperations.RenderCollection(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), FileHelpers.GetRenderDirectory());
         RenderOperations.RenderReadyToPaint(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), FileHelpers.GetRenderDirectory());
         RenderOperations.RenderUnallocated(FileHelpers.GetCollectionFileName(), FileHelpers.GetForcesDirectory(), FileHelpers.GetRenderDirectory());
         RenderOperations.RenderForces(FileHelpers.GetForcesDirectory(), FileHelpers.GetRenderDirectory());
         return 0;
+    }
+
+    static void EnsureCollection()
+    {
+        var file = FileHelpers.GetCollectionFileName();
+        if (!File.Exists(file))
+        {
+            CollectionOperations.NewCollection(file, "My Collection", false);
+        }
     }
 }

@@ -11,13 +11,23 @@ static class FileHelpers
     public static string GetForcesDirectory()
     {
         var settings = SettingsManager.GetSettings();
-        return Path.Combine(settings.Path, "forces");
+        var path = Path.Combine(settings.Path, "forces");
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        return path;
     }
 
     public static string GetRenderDirectory()
     {
         var settings = SettingsManager.GetSettings();
-        return Path.Combine(settings.Path, "md");
+        var path = Path.Combine(settings.Path, "md");
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        return path;
     }
 
     public static string GetForceFileName(string forceName)
