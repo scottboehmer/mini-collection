@@ -228,6 +228,7 @@ static class RenderOperations
     public static void RenderUnallocated(string collectionFile, string forcePath, string outputPath)
     {
         var allocatedCounts = new Dictionary<string, uint>();
+        var allocations = new Dictionary<string, List<string>>();
 
         var collection = CollectionOperations.LoadCollection(collectionFile);
         var outputFile = Path.Join(outputPath, "unallocated.md");
@@ -243,10 +244,13 @@ static class RenderOperations
                     if (allocatedCounts.ContainsKey(mini.Name))
                     {
                         allocatedCounts[mini.Name]++;
+                        allocations[mini.Name].Add(force.Name);
                     }
                     else
                     {
                         allocatedCounts[mini.Name] = 1;
+                        allocations[mini.Name] = new List<string>([force.Name]);
+
                     }
                 }
             }
@@ -262,8 +266,8 @@ static class RenderOperations
 
             writer.WriteLine($"# {collection.Name}");
             writer.WriteLine();
-            writer.WriteLine("| Miniature | Unallocated |");
-            writer.WriteLine("| :--- | ---: |");
+            writer.WriteLine("| Miniature | Unallocated | Existing Allocations |");
+            writer.WriteLine("| :--- | ---: | :--- |");
 
             foreach (var mini in collection.Miniatures)
             {
@@ -280,11 +284,11 @@ static class RenderOperations
 
                 if (unallocatedCount > 0)
                 {
-                    writer.WriteLine($"| {mini.Name} | {unallocatedCount} |");
+                    writer.WriteLine($"| {mini.Name} | {unallocatedCount} | {(allocations.ContainsKey(mini.Name) ? String.Join(", ", allocations[mini.Name]) : "")} |");
                 }
             }
 
-            writer.WriteLine($"| TOTAL | {totalUnallocated} |");
+            writer.WriteLine($"| TOTAL | {totalUnallocated} | |");
 
             writer.WriteLine();
         }
